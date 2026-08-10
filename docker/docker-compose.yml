@@ -1,21 +1,5 @@
-version: '3.8'
-
 services:
-  postgres:
-    image: postgres:15
-    container_name: siem-postgres
-    environment:
-      POSTGRES_USER: siem_user
-      POSTGRES_PASSWORD: siem_password
-      POSTGRES_DB: securevision
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - siem_network
-    restart: unless-stopped
-
+  # Cache en mémoire pour les sessions et files d'attente
   redis:
     image: redis:7
     container_name: siem-redis
@@ -25,6 +9,7 @@ services:
       - siem_network
     restart: unless-stopped
 
+  # Broker de messages en mode KRaft (sans Zookeeper)[cite: 1]
   kafka:
     image: bitnami/kafka:latest
     container_name: siem-kafka
@@ -46,9 +31,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres_data:
   kafka_data:
-
 
 networks:
   siem_network:
